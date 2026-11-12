@@ -1,0 +1,101 @@
+service: festival-check-in
+frameworkVersion: ~4.45.0
+
+provider:
+  name: aws
+  runtime: nodejs22.x
+  region: ${env:AWS_REGION}
+  stage: dev
+  iam:
+    role: ${env:LAMBDA_ROLE_ARN}
+  environment:
+    FCI_TABLA_EVENTOS:
+      Ref: FestivalCheckInEventos
+    FCI_TABLA_INSCRIPCIONES:
+      Ref: FestivalCheckInInscripciones
+  httpApi:
+    payload: '2.0'
+    cors:
+      allowedOrigins:
+        - https://albertohdezakkari.github.io
+      allowedHeaders:
+        - Content-Type
+      allowedMethods:
+        - GET
+        - POST
+        - PATCH
+
+build:
+  esbuild: false
+
+functions:
+  crearEvento:
+    name: ${self:service}-${sls:stage}-crearEvento
+    handler: src/eventos/crear.handler
+  consultarPase:
+    handler: src/pases/consultar.handler
+    events:
+      - httpApi:
+          method: GET
+          path: /events/{eventId}/registrations/{userId}
+  inscribirUsuario:
+    handler: src/pases/inscribir.handler
+    events:
+      - httpApi:
+          method: POST
+          path: /events/{eventId}/registrations/{userId}
+  registrarEntrada:
+    handler: src/pases/entrada.handler
+    events:
+      - httpApi:
+          method: PATCH
+          path: /events/{eventId}/registrations/{userId}
+
+resources:
+  Resources:
+    FestivalCheckInEventos:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: FCI_EVENTOS
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: TIPO_REGISTRO
+            AttributeType: S
+          - AttributeName: EVENT_ID
+            AttributeType: N
+        KeySchema:
+          - AttributeName: TIPO_REGISTRO
+            KeyType: HASH
+          - AttributeName: EVENT_ID
+            KeyType: RANGE
+    FestivalCheckInInscripciones:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: FCI_INSCRIPCIONES
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: EVENT_ID
+            AttributeType: N
+          - AttributeName: USER_ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: EVENT_ID
+            KeyType: HASH
+          - AttributeName: USER_ID
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: PorUsuario
+            KeySchema:
+              - AttributeName: USER_ID
+                KeyType: HASH
+              - AttributeName: EVENT_ID
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+  Outputs:
+    NombreTablaEventosFCI:
+      Value:
+        Ref: FestivalCheckInEventos
+    NombreTablaInscripcionesFCI:
+      Value:
+        Ref: FestivalCheckInInscripciones

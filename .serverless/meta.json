@@ -1,0 +1,280 @@
+{
+  "C:\\Clase\\devops\\05-FESATIVAL-CHECK-IN\\festival-checkin\\serverless.yml": {
+    "versionFramework": "4.45.0",
+    "servicePath": "C:\\Clase\\devops\\05-FESATIVAL-CHECK-IN\\festival-checkin\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "festival-check-in",
+      "frameworkVersion": "~4.45.0",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs22.x",
+        "region": "${env:AWS_REGION}",
+        "stage": "dev",
+        "iam": {
+          "role": "${env:LAMBDA_ROLE_ARN}"
+        },
+        "environment": {
+          "FCI_TABLA_EVENTOS": {
+            "Ref": "FestivalCheckInEventos"
+          },
+          "FCI_TABLA_INSCRIPCIONES": {
+            "Ref": "FestivalCheckInInscripciones"
+          }
+        },
+        "httpApi": {
+          "payload": "2.0",
+          "cors": {
+            "allowedOrigins": [
+              "https://albertohdezakkari.github.io"
+            ],
+            "allowedHeaders": [
+              "Content-Type"
+            ],
+            "allowedMethods": [
+              "GET",
+              "POST",
+              "PATCH"
+            ]
+          }
+        }
+      },
+      "build": {
+        "esbuild": false
+      },
+      "functions": {
+        "crearEvento": {
+          "name": "${self:service}-${sls:stage}-crearEvento",
+          "handler": "src/eventos/crear.handler"
+        },
+        "consultarPase": {
+          "handler": "src/pases/consultar.handler",
+          "events": [
+            {
+              "httpApi": {
+                "method": "GET",
+                "path": "/events/{eventId}/registrations/{userId}"
+              }
+            }
+          ]
+        },
+        "inscribirUsuario": {
+          "handler": "src/pases/inscribir.handler",
+          "events": [
+            {
+              "httpApi": {
+                "method": "POST",
+                "path": "/events/{eventId}/registrations/{userId}"
+              }
+            }
+          ]
+        },
+        "registrarEntrada": {
+          "handler": "src/pases/entrada.handler",
+          "events": [
+            {
+              "httpApi": {
+                "method": "PATCH",
+                "path": "/events/{eventId}/registrations/{userId}"
+              }
+            }
+          ]
+        }
+      },
+      "resources": {
+        "Resources": {
+          "FestivalCheckInEventos": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "FCI_EVENTOS",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "TIPO_REGISTRO",
+                  "AttributeType": "S"
+                },
+                {
+                  "AttributeName": "EVENT_ID",
+                  "AttributeType": "N"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "TIPO_REGISTRO",
+                  "KeyType": "HASH"
+                },
+                {
+                  "AttributeName": "EVENT_ID",
+                  "KeyType": "RANGE"
+                }
+              ]
+            }
+          },
+          "FestivalCheckInInscripciones": {
+            "Type": "AWS::DynamoDB::Table",
+            "Properties": {
+              "TableName": "FCI_INSCRIPCIONES",
+              "BillingMode": "PAY_PER_REQUEST",
+              "AttributeDefinitions": [
+                {
+                  "AttributeName": "EVENT_ID",
+                  "AttributeType": "N"
+                },
+                {
+                  "AttributeName": "USER_ID",
+                  "AttributeType": "S"
+                }
+              ],
+              "KeySchema": [
+                {
+                  "AttributeName": "EVENT_ID",
+                  "KeyType": "HASH"
+                },
+                {
+                  "AttributeName": "USER_ID",
+                  "KeyType": "RANGE"
+                }
+              ],
+              "GlobalSecondaryIndexes": [
+                {
+                  "IndexName": "PorUsuario",
+                  "KeySchema": [
+                    {
+                      "AttributeName": "USER_ID",
+                      "KeyType": "HASH"
+                    },
+                    {
+                      "AttributeName": "EVENT_ID",
+                      "KeyType": "RANGE"
+                    }
+                  ],
+                  "Projection": {
+                    "ProjectionType": "KEYS_ONLY"
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {
+          "NombreTablaEventosFCI": {
+            "Value": {
+              "Ref": "FestivalCheckInEventos"
+            }
+          },
+          "NombreTablaInscripcionesFCI": {
+            "Value": {
+              "Ref": "FestivalCheckInInscripciones"
+            }
+          }
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs22.x",
+      "region": "${env:AWS_REGION}",
+      "stage": "dev",
+      "iam": {
+        "role": "${env:LAMBDA_ROLE_ARN}"
+      },
+      "environment": {
+        "FCI_TABLA_EVENTOS": {
+          "Ref": "FestivalCheckInEventos"
+        },
+        "FCI_TABLA_INSCRIPCIONES": {
+          "Ref": "FestivalCheckInInscripciones"
+        }
+      },
+      "httpApi": {
+        "payload": "2.0",
+        "cors": {
+          "allowedOrigins": [
+            "https://albertohdezakkari.github.io"
+          ],
+          "allowedHeaders": [
+            "Content-Type"
+          ],
+          "allowedMethods": [
+            "GET",
+            "POST",
+            "PATCH"
+          ]
+        }
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: festival-check-in\nframeworkVersion: ~4.45.0\n\nprovider:\n  name: aws\n  runtime: nodejs22.x\n  region: ${env:AWS_REGION}\n  stage: dev\n  iam:\n    role: ${env:LAMBDA_ROLE_ARN}\n  environment:\n    FCI_TABLA_EVENTOS:\n      Ref: FestivalCheckInEventos\n    FCI_TABLA_INSCRIPCIONES:\n      Ref: FestivalCheckInInscripciones\n  httpApi:\n    payload: '2.0'\n    cors:\n      allowedOrigins:\n        - https://albertohdezakkari.github.io\n      allowedHeaders:\n        - Content-Type\n      allowedMethods:\n        - GET\n        - POST\n        - PATCH\n\nbuild:\n  esbuild: false\n\nfunctions:\n  crearEvento:\n    name: ${self:service}-${sls:stage}-crearEvento\n    handler: src/eventos/crear.handler\n  consultarPase:\n    handler: src/pases/consultar.handler\n    events:\n      - httpApi:\n          method: GET\n          path: /events/{eventId}/registrations/{userId}\n  inscribirUsuario:\n    handler: src/pases/inscribir.handler\n    events:\n      - httpApi:\n          method: POST\n          path: /events/{eventId}/registrations/{userId}\n  registrarEntrada:\n    handler: src/pases/entrada.handler\n    events:\n      - httpApi:\n          method: PATCH\n          path: /events/{eventId}/registrations/{userId}\n\nresources:\n  Resources:\n    FestivalCheckInEventos:\n      Type: AWS::DynamoDB::Table\n      Properties:\n        TableName: FCI_EVENTOS\n        BillingMode: PAY_PER_REQUEST\n        AttributeDefinitions:\n          - AttributeName: TIPO_REGISTRO\n            AttributeType: S\n          - AttributeName: EVENT_ID\n            AttributeType: N\n        KeySchema:\n          - AttributeName: TIPO_REGISTRO\n            KeyType: HASH\n          - AttributeName: EVENT_ID\n            KeyType: RANGE\n    FestivalCheckInInscripciones:\n      Type: AWS::DynamoDB::Table\n      Properties:\n        TableName: FCI_INSCRIPCIONES\n        BillingMode: PAY_PER_REQUEST\n        AttributeDefinitions:\n          - AttributeName: EVENT_ID\n            AttributeType: N\n          - AttributeName: USER_ID\n            AttributeType: S\n        KeySchema:\n          - AttributeName: EVENT_ID\n            KeyType: HASH\n          - AttributeName: USER_ID\n            KeyType: RANGE\n        GlobalSecondaryIndexes:\n          - IndexName: PorUsuario\n            KeySchema:\n              - AttributeName: USER_ID\n                KeyType: HASH\n              - AttributeName: EVENT_ID\n                KeyType: RANGE\n            Projection:\n              ProjectionType: KEYS_ONLY\n  Outputs:\n    NombreTablaEventosFCI:\n      Value:\n        Ref: FestivalCheckInEventos\n    NombreTablaInscripcionesFCI:\n      Value:\n        Ref: FestivalCheckInInscripciones\n",
+    "command": [
+      "login"
+    ],
+    "options": {},
+    "orgId": "0730bd27-4fa9-458a-b540-e013a7194898",
+    "orgName": "a27275",
+    "userId": "5pqvNt4mv6c6vQqNGq",
+    "userName": "a27275",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:910802441349:stack/festival-check-in-dev/b31138b0-de7b-11f1-99fb-0affdd818975",
+    "serviceProviderAwsCfStackCreated": "2026-11-12T09:30:29.267Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ConsultarPaseLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:910802441349:function:festival-check-in-dev-consultarPase:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-festival-check-in-dev-ConsultarPaseLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "InscribirUsuarioLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:910802441349:function:festival-check-in-dev-inscribirUsuario:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-festival-check-in-dev-InscribirUsuarioLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "CrearEventoLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:910802441349:function:festival-check-in-dev-crearEvento:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-festival-check-in-dev-CrearEventoLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "RegistrarEntradaLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:910802441349:function:festival-check-in-dev-registrarEntrada:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-festival-check-in-dev-RegistrarEntradaLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "NombreTablaEventosFCI",
+        "OutputValue": "FCI_EVENTOS"
+      },
+      {
+        "OutputKey": "NombreTablaInscripcionesFCI",
+        "OutputValue": "FCI_INSCRIPCIONES"
+      },
+      {
+        "OutputKey": "HttpApiId",
+        "OutputValue": "wht20uh7m2",
+        "Description": "Id of the HTTP API",
+        "ExportName": "sls-festival-check-in-dev-HttpApiId"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+        "ExportName": "sls-festival-check-in-dev-ServerlessDeploymentBucketName"
+      },
+      {
+        "OutputKey": "HttpApiUrl",
+        "OutputValue": "https://wht20uh7m2.execute-api.us-east-1.amazonaws.com",
+        "Description": "URL of the HTTP API",
+        "ExportName": "sls-festival-check-in-dev-HttpApiUrl"
+      }
+    ]
+  }
+}

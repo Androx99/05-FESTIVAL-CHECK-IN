@@ -1,0 +1,600 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "CrearEventoLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/festival-check-in-dev-crearEvento"
+      }
+    },
+    "ConsultarPaseLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/festival-check-in-dev-consultarPase"
+      }
+    },
+    "InscribirUsuarioLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/festival-check-in-dev-inscribirUsuario"
+      }
+    },
+    "RegistrarEntradaLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/festival-check-in-dev-registrarEntrada"
+      }
+    },
+    "CrearEventoLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+          "S3Key": "serverless/festival-check-in/dev/1794475818754-2026-11-12T09:30:18.754Z/festival-check-in.zip"
+        },
+        "Handler": "src/eventos/crear.handler",
+        "Runtime": "nodejs22.x",
+        "FunctionName": "festival-check-in-dev-crearEvento",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "FCI_TABLA_EVENTOS": {
+              "Ref": "FestivalCheckInEventos"
+            },
+            "FCI_TABLA_INSCRIPCIONES": {
+              "Ref": "FestivalCheckInInscripciones"
+            }
+          }
+        },
+        "Role": "arn:aws:iam::910802441349:role/LabRole"
+      },
+      "DependsOn": [
+        "CrearEventoLogGroup"
+      ]
+    },
+    "ConsultarPaseLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+          "S3Key": "serverless/festival-check-in/dev/1794475818754-2026-11-12T09:30:18.754Z/festival-check-in.zip"
+        },
+        "Handler": "src/pases/consultar.handler",
+        "Runtime": "nodejs22.x",
+        "FunctionName": "festival-check-in-dev-consultarPase",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "FCI_TABLA_EVENTOS": {
+              "Ref": "FestivalCheckInEventos"
+            },
+            "FCI_TABLA_INSCRIPCIONES": {
+              "Ref": "FestivalCheckInInscripciones"
+            }
+          }
+        },
+        "Role": "arn:aws:iam::910802441349:role/LabRole"
+      },
+      "DependsOn": [
+        "ConsultarPaseLogGroup"
+      ]
+    },
+    "InscribirUsuarioLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+          "S3Key": "serverless/festival-check-in/dev/1794475818754-2026-11-12T09:30:18.754Z/festival-check-in.zip"
+        },
+        "Handler": "src/pases/inscribir.handler",
+        "Runtime": "nodejs22.x",
+        "FunctionName": "festival-check-in-dev-inscribirUsuario",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "FCI_TABLA_EVENTOS": {
+              "Ref": "FestivalCheckInEventos"
+            },
+            "FCI_TABLA_INSCRIPCIONES": {
+              "Ref": "FestivalCheckInInscripciones"
+            }
+          }
+        },
+        "Role": "arn:aws:iam::910802441349:role/LabRole"
+      },
+      "DependsOn": [
+        "InscribirUsuarioLogGroup"
+      ]
+    },
+    "RegistrarEntradaLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+          "S3Key": "serverless/festival-check-in/dev/1794475818754-2026-11-12T09:30:18.754Z/festival-check-in.zip"
+        },
+        "Handler": "src/pases/entrada.handler",
+        "Runtime": "nodejs22.x",
+        "FunctionName": "festival-check-in-dev-registrarEntrada",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "FCI_TABLA_EVENTOS": {
+              "Ref": "FestivalCheckInEventos"
+            },
+            "FCI_TABLA_INSCRIPCIONES": {
+              "Ref": "FestivalCheckInInscripciones"
+            }
+          }
+        },
+        "Role": "arn:aws:iam::910802441349:role/LabRole"
+      },
+      "DependsOn": [
+        "RegistrarEntradaLogGroup"
+      ]
+    },
+    "CrearEventoLambdaVersiontZgDYPga2GXFLP6XBSjMV0nnSBvW6aFADgSxf6fzLuE": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "CrearEventoLambdaFunction"
+        },
+        "CodeSha256": "sX5cCuqBt86Xqj6mOHWTAlJBf1zRklkcWg+PibFoiEc="
+      }
+    },
+    "ConsultarPaseLambdaVersionj6U0EcNRlYHbvLodicL6tChEFoOBKATjhRYRC6YY2g": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ConsultarPaseLambdaFunction"
+        },
+        "CodeSha256": "sX5cCuqBt86Xqj6mOHWTAlJBf1zRklkcWg+PibFoiEc="
+      }
+    },
+    "InscribirUsuarioLambdaVersionDxKACAKWLLm8F108EgymHLy6Nshd9B6UUyZGlOnm7Q": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "InscribirUsuarioLambdaFunction"
+        },
+        "CodeSha256": "sX5cCuqBt86Xqj6mOHWTAlJBf1zRklkcWg+PibFoiEc="
+      }
+    },
+    "RegistrarEntradaLambdaVersionX5eVXbocTzd1fCDpfFTOArPJpFlbwgqeHvhLAiqDVLM": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "RegistrarEntradaLambdaFunction"
+        },
+        "CodeSha256": "sX5cCuqBt86Xqj6mOHWTAlJBf1zRklkcWg+PibFoiEc="
+      }
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "dev-festival-check-in",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Content-Type"
+          ],
+          "AllowMethods": [
+            "GET",
+            "POST",
+            "PATCH"
+          ],
+          "AllowOrigins": [
+            "https://albertohdezakkari.github.io"
+          ]
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        }
+      }
+    },
+    "ConsultarPaseLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "ConsultarPaseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationConsultarPase": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "ConsultarPaseLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRouteGetEventsEventidVarRegistrationsUseridVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "GET /events/{eventId}/registrations/{userId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationConsultarPase"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationConsultarPase"
+    },
+    "InscribirUsuarioLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "InscribirUsuarioLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationInscribirUsuario": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "InscribirUsuarioLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostEventsEventidVarRegistrationsUseridVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /events/{eventId}/registrations/{userId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationInscribirUsuario"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationInscribirUsuario"
+    },
+    "RegistrarEntradaLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "RegistrarEntradaLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationRegistrarEntrada": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "RegistrarEntradaLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePatchEventsEventidVarRegistrationsUseridVar": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "PATCH /events/{eventId}/registrations/{userId}",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationRegistrarEntrada"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationRegistrarEntrada"
+    },
+    "FestivalCheckInEventos": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "FCI_EVENTOS",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "TIPO_REGISTRO",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "EVENT_ID",
+            "AttributeType": "N"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "TIPO_REGISTRO",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "EVENT_ID",
+            "KeyType": "RANGE"
+          }
+        ]
+      }
+    },
+    "FestivalCheckInInscripciones": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "FCI_INSCRIPCIONES",
+        "BillingMode": "PAY_PER_REQUEST",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "EVENT_ID",
+            "AttributeType": "N"
+          },
+          {
+            "AttributeName": "USER_ID",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "EVENT_ID",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "USER_ID",
+            "KeyType": "RANGE"
+          }
+        ],
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "PorUsuario",
+            "KeySchema": [
+              {
+                "AttributeName": "USER_ID",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "EVENT_ID",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "KEYS_ONLY"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-94cbead0-4782",
+      "Export": {
+        "Name": "sls-festival-check-in-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "CrearEventoLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "CrearEventoLambdaVersiontZgDYPga2GXFLP6XBSjMV0nnSBvW6aFADgSxf6fzLuE"
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-CrearEventoLambdaFunctionQualifiedArn"
+      }
+    },
+    "ConsultarPaseLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "ConsultarPaseLambdaVersionj6U0EcNRlYHbvLodicL6tChEFoOBKATjhRYRC6YY2g"
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-ConsultarPaseLambdaFunctionQualifiedArn"
+      }
+    },
+    "InscribirUsuarioLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "InscribirUsuarioLambdaVersionDxKACAKWLLm8F108EgymHLy6Nshd9B6UUyZGlOnm7Q"
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-InscribirUsuarioLambdaFunctionQualifiedArn"
+      }
+    },
+    "RegistrarEntradaLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "RegistrarEntradaLambdaVersionX5eVXbocTzd1fCDpfFTOArPJpFlbwgqeHvhLAiqDVLM"
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-RegistrarEntradaLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-festival-check-in-dev-HttpApiUrl"
+      }
+    },
+    "NombreTablaEventosFCI": {
+      "Value": {
+        "Ref": "FestivalCheckInEventos"
+      }
+    },
+    "NombreTablaInscripcionesFCI": {
+      "Value": {
+        "Ref": "FestivalCheckInInscripciones"
+      }
+    }
+  }
+}
